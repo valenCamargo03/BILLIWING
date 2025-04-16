@@ -349,10 +349,12 @@
             document.documentElement.style.setProperty('--primary-color', document.getElementById('primary-color').value);
             document.documentElement.style.setProperty('--secondary-color', document.getElementById('secondary-color').value);
         }
+    
         function loadImage(event) {
             const logo = document.getElementById('corporate-logo');
             logo.src = URL.createObjectURL(event.target.files[0]);
         }
+    
         function agregarFila() {
             const table = document.getElementById('factura-table');
             const row = table.insertRow(-1);
@@ -365,11 +367,13 @@
             `;
             actualizarTotal();
         }
+    
         function eliminarFila(button) {
             const row = button.parentNode.parentNode;
             row.parentNode.removeChild(row);
             actualizarTotal();
         }
+    
         function actualizarTotal() {
             let total = 0;
             document.querySelectorAll('#factura-table tr').forEach((row, index) => {
@@ -377,14 +381,14 @@
                     const cantidad = row.cells[1].querySelector('input').value;
                     const precio = row.cells[2].querySelector('input').value;
                     const totalItem = cantidad * precio;
-                    row.cells[3].innerText = $${ totalItem.toLocaleString() };
+                    row.cells[3].innerText = `$${totalItem.toLocaleString()}`;
                     total += totalItem;
                 }
             });
-            document.getElementById('total-pagar').innerText = $${ total.toLocaleString() };
+            document.getElementById('total-pagar').innerText = `$${total.toLocaleString()}`;
         }
-        function imprimirFactura();
-        {
+    
+        function imprimirFactura() {
             window.print();
         }
     </script>
