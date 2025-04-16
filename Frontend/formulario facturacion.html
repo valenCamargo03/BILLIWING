@@ -61,36 +61,62 @@
       font-size: 18px;
       color: var(--primary-color);
     }
-    input[type="color"],
-    input[type="file"],
-    button {
-      margin: 10px 5px;
+    .formulario {
+      margin: 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .formulario input {
+      padding: 5px;
+      width: 100%;
+      max-width: 400px;
+    }
+    .section {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Controles -->
-  <input type="color" id="primary-color" value="#007bff" onchange="updateColors()" />
-  <input type="color" id="secondary-color" value="#e9ecef" onchange="updateColors()" />
-  <input type="file" accept="image/*" onchange="loadImage(event)" />
-  <button onclick="agregarFila()">Agregar producto</button>
+  <!-- FORMULARIO PARA LLENAR FACTURACIÓN -->
+  <div class="formulario">
+    <h3>Información de la Empresa</h3>
+    <div class="section">
+      <input type="text" id="empresa-nombre" placeholder="Nombre Empresa" value="Billiwing S.A.S." />
+      <input type="text" id="empresa-nit" placeholder="NIT" value="123.456.789-0" />
+      <input type="text" id="empresa-direccion" placeholder="Dirección" value="Calle 123 #45-67" />
+    </div>
+
+    <h3>Información del Cliente</h3>
+    <div class="section">
+      <input type="text" id="cliente-nombre" placeholder="Nombre del cliente" />
+      <input type="text" id="cliente-cedula" placeholder="Cédula" />
+      <input type="date" id="cliente-fecha" />
+    </div>
+
+    <button onclick="cargarDatosFacturacion()">Cargar Datos a Factura</button>
+    <button onclick="agregarFila()">Agregar Producto</button>
+  </div>
 
   <div class="factura-container">
     <div class="header">
       <h1>Factura Electrónica</h1>
       <img id="corporate-logo" src="logo.png" width="100" />
     </div>
+
     <div class="datos">
       <div>
-        <strong>Empresa:</strong> Billiwing S.A.S.<br />
-        <strong>NIT:</strong> 123.456.789-0<br />
-        <strong>Dirección:</strong> Calle 123 #45-67
+        <strong>Empresa:</strong> <span id="empresa-nombre-out">Billiwing S.A.S.</span><br />
+        <strong>NIT:</strong> <span id="empresa-nit-out">123.456.789-0</span><br />
+        <strong>Dirección:</strong> <span id="empresa-direccion-out">Calle 123 #45-67</span>
       </div>
       <div>
-        <strong>Cliente:</strong> Juan Pérez<br />
-        <strong>Cédula:</strong> 9876543210<br />
-        <strong>Fecha:</strong> 16/04/2025
+        <strong>Cliente:</strong> <span id="cliente-nombre-out">N/A</span><br />
+        <strong>Cédula:</strong> <span id="cliente-cedula-out">N/A</span><br />
+        <strong>Fecha:</strong> <span id="cliente-fecha-out">--</span>
       </div>
     </div>
 
@@ -110,14 +136,16 @@
   </div>
 
   <script>
-    function updateColors() {
-      document.documentElement.style.setProperty('--primary-color', document.getElementById('primary-color').value);
-      document.documentElement.style.setProperty('--secondary-color', document.getElementById('secondary-color').value);
-    }
+    function cargarDatosFacturacion() {
+      // Empresa
+      document.getElementById('empresa-nombre-out').innerText = document.getElementById('empresa-nombre').value || 'N/A';
+      document.getElementById('empresa-nit-out').innerText = document.getElementById('empresa-nit').value || 'N/A';
+      document.getElementById('empresa-direccion-out').innerText = document.getElementById('empresa-direccion').value || 'N/A';
 
-    function loadImage(event) {
-      const logo = document.getElementById('corporate-logo');
-      logo.src = URL.createObjectURL(event.target.files[0]);
+      // Cliente
+      document.getElementById('cliente-nombre-out').innerText = document.getElementById('cliente-nombre').value || 'N/A';
+      document.getElementById('cliente-cedula-out').innerText = document.getElementById('cliente-cedula').value || 'N/A';
+      document.getElementById('cliente-fecha-out').innerText = document.getElementById('cliente-fecha').value || new Date().toLocaleDateString();
     }
 
     function agregarFila() {
@@ -144,7 +172,7 @@
       const filas = document.querySelectorAll("#factura-table tr");
 
       filas.forEach((fila, i) => {
-        if (i === 0) return; // Saltar encabezado
+        if (i === 0) return;
 
         const cantidad = parseFloat(fila.cells[1].querySelector("input").value) || 0;
         const precio = parseFloat(fila.cells[2].querySelector("input").value) || 0;
