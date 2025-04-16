@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    /* Configuración general */
+    body {
+      font-family: "Arial", sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      background-color: #f8f9fa; /* Gris claro elegante */
+    }
+
+    /* Encabezado */
+    header {
+      background: linear-gradient(90deg, #ff69b4, #ff1493); /* Gradiente rosado elegante */
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    header img {
+      max-width: 120px;
+      height: auto;
+      margin-top: 10px;
+    }
+
+    header .auth-buttons {
+      margin-top: 15px;
+    }
+
+    header .auth-buttons a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+      padding: 8px 15px;
+      border: 2px solid white;
+      border-radius: 20px;
+      transition: all 0.3s;
+      font-weight: bold;
+    }
+
+    header .auth-buttons a:hover {
+      background-color: white;
+      color: #ff1493;
+    }
+
+    /* Navegación */
+    nav {
+      background-color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 10px 0;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    nav a {
+      color: #333;
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 1rem;
+      font-weight: bold;
+      padding: 5px 10px;
+    }
+
+    nav a:hover {
+      color: #ff1493;
+    }
+
+    /* Contenido principal */
+    main {
+      text-align: center;
+      padding: 40px 20px;
+      background: #fff;
+    }
+
+    main h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: rgb(3, 3, 107);
+    }
+
+    main p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #555;
+    }
+
+    /* Imagen destacada */
+    .bottom-image-container {
+      text-align: center;
+      margin: 40px auto;
+    }
+
+    .bottom-image-container img {
+      max-width: 60%;
+      border: 5px solid #d31078;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .bottom-image-container img:hover {
+      transform: scale(1.05);
+    }
+
+    /* Pie de página */
+    footer {
+      background-color: rgb(8, 8, 85);
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    footer p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+  </style>
+  <body>
+    <main id="register">
+      <h2>Registro</h2>
+      <p>Crea una cuenta para acceder a nuestros servicios.</p>
+      <form action="/register" method="post" style="max-width: 400px; margin: 0 auto; text-align: left; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1)">
+        <label for="name" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333">Nombre Completo:</label>
+        <input type="text" id="name" name="name" required placeholder="Ingresa tu nombre" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem" />
+
+        <label for="email" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333">Correo Electrónico:</label>
+        <input type="email" id="email" name="email" required placeholder="Ingresa tu correo" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem" />
+
+        <label for="password" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333">Contraseña:</label>
+        <input type="password" id="password" name="password" required placeholder="Ingresa tu contraseña" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem" />
+
+        <label for="confirm-password" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333">Confirmar Contraseña:</label>
+        <input type="password" id="confirm-password" name="confirm-password" required placeholder="Confirma tu contraseña" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem" />
+
+        <button type="submit" style="width: 100%; background: #ff1493; color: white; border: none; padding: 12px; border-radius: 5px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.3s">Registrarse</button>
+
+        <p style="margin-top: 15px; font-size: 0.9rem; text-align: center">¿Ya tienes una cuenta? <a href="#login" style="color: #ff1493; text-decoration: none; font-weight: bold">Inicia sesión aquí</a>.</p>
+      </form>
+    </main>
+  </body>
+</html>
+
+<!-- crear una funcion que almacene los datos del usuario registrado en el API-->

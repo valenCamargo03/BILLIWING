@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contabilidad</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="registro.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>Registro Contable</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Ingreso</th>
+            <th>Egreso</th>
+            <th>Saldo</th>
+          </tr>
+        </thead>
+        <tbody id="contabilidad-body">
+          <!-- Filas dinámicas -->
+        </tbody>
+      </table>
+      <button id="agregar-registro">➕ Agregar Registro</button>
+    </div>
+  </body>
+
+  <script src="registro.js"></script>
+</html>
+
+<!-- asignarles un ID a fecha, descripcion, ing, egre, saldo y en el script crear una funcion que almacene la informacion proporcionada-->

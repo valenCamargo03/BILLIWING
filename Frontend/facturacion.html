@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Factura Electrónica - Billiwing</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background: var(--background-color, #f9f9f9);
+        padding: 20px;
+        height: 100%;
+      }
+
+      .factura-container {
+        max-width: 900px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 3px solid var(--primary-color, #007bff);
+        padding-bottom: 10px;
+      }
+
+      .header h1 {
+        color: var(--primary-color, #007bff);
+        font-size: 26px;
+      }
+
+      .datos {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding: 15px;
+        background: var(--secondary-color, #e9ecef);
+        border-radius: 5px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+      }
+
+      th {
+        background: var(--primary-color, #007bff);
+        color: white;
+      }
+
+      .total {
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--primary-color, #007bff);
+        text-align: right;
+        margin-top: 20px;
+      }
+
+      #image-input {
+        margin-top: 10px;
+      }
+
+      .controls {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <input type="color" id="primary-color" value="#007bff" onchange="updateColors()" />
+    <input type="color" id="secondary-color" value="#e9ecef" onchange="updateColors()" />
+    <input type="file" id="image-input" accept="image/*" onchange="loadImage(event)" />
+
+    <div class="factura-container">
+      <div class="header">
+        <h1>Factura Electrónica</h1>
+        <img id="corporate-logo" src="logo.png" alt="Logo" width="100" />
+      </div>
+      <div class="datos">
+        <div>
+          <strong>Empresa:</strong> Billiwing S.A.S.<br />
+          <strong>NIT:</strong> 123.456.789-0<br />
+          <strong>Dirección:</strong> Calle 123 #45-67, Ciudad
+        </div>
+        <div>
+          <strong>Cliente:</strong> Juan Pérez<br />
+          <strong>Cédula:</strong> 9876543210<br />
+          <strong>Fecha:</strong> 26/02/2025
+        </div>
+      </div>
+      <table id="factura-table">
+        <tr>
+          <th>Descripción</th>
+          <th>Cantidad</th>
+          <th>Precio Unitario</th>
+          <th>Total</th>
+          <th>Iva (19%)</th>
+        </tr>
+      </table>
+
+      <div class="total">Total a pagar: <strong id="total-pagar">$0</strong></div>
+      <button onclick="imprimirFactura()">Imprimir Factura</button>
+    </div>
+
+    <script>
+      function updateColors() {
+          document.documentElement.style.setProperty('--primary-color', document.getElementById('primary-color').value);
+          document.documentElement.style.setProperty('--secondary-color', document.getElementById('secondary-color').value);
+      }
+      function loadImage(event) {
+          const logo = document.getElementById('corporate-logo');
+          logo.src = URL.createObjectURL(event.target.files[0]);
+      }
+      function agregarFila() {
+          const table = document.getElementById('factura-table');
+          const row = table.insertRow(-1);
+          row.innerHTML = `
+              <td><input type="text" placeholder="Descripción"></td>
+              <td><input type="number" value="1" min="1" onchange="actualizarTotal()"></td>
+              <td><input type="number" value="0" min="0" onchange="actualizarTotal()"></td>
+              <td class="total-item">$0</td>
+              <td><button onclick="eliminarFila(this)">Eliminar</button></td>
+          `;
+          actualizarTotal();
+      }
+      function eliminarFila(button) {
+          const row = button.parentNode.parentNode;
+          row.parentNode.removeChild(row);
+          actualizarTotal();
+      }
+      function actualizarTotal() {
+          let total = 0;
+          document.querySelectorAll('#factura-table tr').forEach((row, index) => {
+              if (index > 0) {
+                  const cantidad = row.cells[1].querySelector('input').value;
+                  const precio = row.cells[2].querySelector('input').value;
+                  const totalItem = cantidad * precio;
+                  row.cells[3].innerText = $${ totalItem.toLocaleString() };
+                  total += totalItem;
+              }
+          });
+          document.getElementById('total-pagar').innerText = $${ total.toLocaleString() };
+      }
+      function imprimirFactura();
+      {
+          window.print();
+      }
+    </script>
+  </body>
+</html>
+
+<!-- eliminar funciones inncesarias, crear una funcion que traiga los servicios adquiridos -->
