@@ -225,6 +225,983 @@
         </p>
     </form>
 </main>
+<script>
+    document.getElementById("login-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+  
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+  
+      try {
+        const res = await fetch("http://localhost:3000/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        });
+  
+        const data = await res.json();
+  
+        if (!res.ok) {
+          alert(data.message || "Error al iniciar sesión");
+          return;
+        }
+  
+        localStorage.setItem("token", data.token);
+        alert("Inicio de sesión exitoso");
+        window.location.href = "prueba.html";
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Ocurrió un error al conectar con el servidor");
+      }
+    });
+  </script>
+  
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura Electrónica - Billiwing</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: var(--background-color, #f9f9f9);
+            padding: 20px;
+        }
+
+        .factura-container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--primary-color, #007bff);
+            padding-bottom: 10px;
+        }
+
+        .header h1 {
+            color: var(--primary-color, #007bff);
+            font-size: 26px;
+        }
+
+        .datos {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--secondary-color, #e9ecef);
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background: var(--primary-color, #007bff);
+            color: white;
+        }
+
+        .total {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color, #007bff);
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        #image-input {
+            margin-top: 10px;
+        }
+
+        .controls {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <input type="color" id="primary-color" value="#007bff" onchange="updateColors()">
+    <input type="color" id="secondary-color" value="#e9ecef" onchange="updateColors()">
+    <input type="file" id="image-input" accept="image/*" onchange="loadImage(event)">
+
+    <div class="factura-container">
+        <div class="header">
+            <h1>Factura Electrónica</h1>
+            <img id="corporate-logo" src="logo.png" alt="Logo" width="100">
+        </div>
+        <div class="datos">
+            <div>
+                <strong>Empresa:</strong> Billiwing S.A.S.<br>
+                <strong>NIT:</strong> 123.456.789-0<br>
+                <strong>Dirección:</strong> Calle 123 #45-67, Ciudad
+            </div>
+            <div>
+                <strong>Cliente:</strong> Juan Pérez<br>
+                <strong>Cédula:</strong> 9876543210<br>
+                <strong>Fecha:</strong> 26/02/2025
+            </div>
+        </div>
+        <table id="factura-table">
+            <tr>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Total</th>
+                <th>Acciones</th>
+            </tr>
+        </table>
+        <button onclick="agregarFila()">Agregar Producto</button>
+        <div class="total">
+            Total a pagar: <strong id="total-pagar">$0</strong>
+        </div>
+        <button onclick="imprimirFactura()">Imprimir Factura</button>
+    </div>
+    
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Factura - Billiwing</title>
+      <style>
+        :root {
+          --primary-color: #007bff;
+          --secondary-color: #e9ecef;
+        }
+        body {
+          font-family: Arial, sans-serif;
+          background: #f9f9f9;
+          padding: 20px;
+        }
+        .factura-container {
+          max-width: 900px;
+          margin: auto;
+          background: #fff;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 3px solid var(--primary-color);
+          margin-bottom: 15px;
+        }
+        .header h1 {
+          color: var(--primary-color);
+        }
+        .datos {
+          display: flex;
+          justify-content: space-between;
+          background: var(--secondary-color);
+          padding: 10px;
+          border-radius: 5px;
+          margin-bottom: 20px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 15px;
+        }
+        th, td {
+          border: 1px solid #ccc;
+          padding: 8px;
+          text-align: center;
+        }
+        th {
+          background-color: var(--primary-color);
+          color: #fff;
+        }
+        .total {
+          text-align: right;
+          margin-top: 15px;
+          font-weight: bold;
+          font-size: 18px;
+          color: var(--primary-color);
+        }
+        .formulario {
+          margin: 20px 0;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .formulario input {
+          padding: 5px;
+          width: 100%;
+          max-width: 400px;
+        }
+        .section {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+        }
+      </style>
+    </head>
+    <body>
+    
+      <!-- FORMULARIO PARA LLENAR FACTURACIÓN -->
+      <div class="formulario">
+        <h3>Información de la Empresa</h3>
+        <div class="section">
+          <input type="text" id="empresa-nombre" placeholder="Nombre Empresa" value="Billiwing S.A.S." />
+          <input type="text" id="empresa-nit" placeholder="NIT" value="123.456.789-0" />
+          <input type="text" id="empresa-direccion" placeholder="Dirección" value="Calle 123 #45-67" />
+        </div>
+    
+        <h3>Información del Cliente</h3>
+        <div class="section">
+          <input type="text" id="cliente-nombre" placeholder="Nombre del cliente" />
+          <input type="text" id="cliente-cedula" placeholder="Cédula" />
+          <input type="date" id="cliente-fecha" />
+        </div>
+    
+        <button onclick="cargarDatosFacturacion()">Cargar Datos a Factura</button>
+        <button onclick="agregarFila()">Agregar Producto</button>
+      </div>
+    
+      <div class="factura-container">
+        <div class="header">
+          <h1>Factura Electrónica</h1>
+          <img id="corporate-logo" src="logo.png" width="100" />
+        </div>
+    
+        <div class="datos">
+          <div>
+            <strong>Empresa:</strong> <span id="empresa-nombre-out">Billiwing S.A.S.</span><br />
+            <strong>NIT:</strong> <span id="empresa-nit-out">123.456.789-0</span><br />
+            <strong>Dirección:</strong> <span id="empresa-direccion-out">Calle 123 #45-67</span>
+          </div>
+          <div>
+            <strong>Cliente:</strong> <span id="cliente-nombre-out">N/A</span><br />
+            <strong>Cédula:</strong> <span id="cliente-cedula-out">N/A</span><br />
+            <strong>Fecha:</strong> <span id="cliente-fecha-out">--</span>
+          </div>
+        </div>
+    
+        <table id="factura-table">
+          <tr>
+            <th>Descripción</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Total</th>
+            <th>IVA (19%)</th>
+            <th>Acción</th>
+          </tr>
+        </table>
+    
+        <div class="total">Total a pagar: <span id="total-pagar">$0</span></div>
+        <button onclick="imprimirFactura()">Imprimir Factura</button>
+      </div>
+    
+      <script>
+        function cargarDatosFacturacion() {
+          // Empresa
+          document.getElementById('empresa-nombre-out').innerText = document.getElementById('empresa-nombre').value || 'N/A';
+          document.getElementById('empresa-nit-out').innerText = document.getElementById('empresa-nit').value || 'N/A';
+          document.getElementById('empresa-direccion-out').innerText = document.getElementById('empresa-direccion').value || 'N/A';
+    
+          // Cliente
+          document.getElementById('cliente-nombre-out').innerText = document.getElementById('cliente-nombre').value || 'N/A';
+          document.getElementById('cliente-cedula-out').innerText = document.getElementById('cliente-cedula').value || 'N/A';
+          document.getElementById('cliente-fecha-out').innerText = document.getElementById('cliente-fecha').value || new Date().toLocaleDateString();
+        }
+    
+        function agregarFila() {
+          const tabla = document.getElementById('factura-table');
+          const fila = tabla.insertRow();
+          fila.innerHTML = `
+            <td><input type="text" placeholder="Descripción" /></td>
+            <td><input type="number" value="1" min="1" onchange="actualizarTotal()" /></td>
+            <td><input type="number" value="0" min="0" onchange="actualizarTotal()" /></td>
+            <td class="total-item">$0</td>
+            <td class="iva-item">$0</td>
+            <td><button onclick="eliminarFila(this)">Eliminar</button></td>
+          `;
+          actualizarTotal();
+        }
+    
+        function eliminarFila(btn) {
+          btn.closest("tr").remove();
+          actualizarTotal();
+        }
+    
+        function actualizarTotal() {
+          let totalGeneral = 0;
+          const filas = document.querySelectorAll("#factura-table tr");
+    
+          filas.forEach((fila, i) => {
+            if (i === 0) return;
+    
+            const cantidad = parseFloat(fila.cells[1].querySelector("input").value) || 0;
+            const precio = parseFloat(fila.cells[2].querySelector("input").value) || 0;
+            const subtotal = cantidad * precio;
+            const iva = subtotal * 0.19;
+    
+            fila.cells[3].innerText = `$${subtotal.toFixed(2)}`;
+            fila.cells[4].innerText = `$${iva.toFixed(2)}`;
+    
+            totalGeneral += subtotal + iva;
+          });
+    
+          document.getElementById("total-pagar").innerText = `$${totalGeneral.toFixed(2)}`;
+        }
+    
+        function imprimirFactura() {
+          window.print();
+        }
+      </script>
+    </body>
+    
+    <script>
+        function updateColors() {
+            document.documentElement.style.setProperty('--primary-color', document.getElementById('primary-color').value);
+            document.documentElement.style.setProperty('--secondary-color', document.getElementById('secondary-color').value);
+        }
+    
+        function loadImage(event) {
+            const logo = document.getElementById('corporate-logo');
+            logo.src = URL.createObjectURL(event.target.files[0]);
+        }
+    
+        function agregarFila() {
+            const table = document.getElementById('factura-table');
+            const row = table.insertRow(-1);
+            row.innerHTML = `
+                <td><input type="text" placeholder="Descripción"></td>
+                <td><input type="number" value="1" min="1" onchange="actualizarTotal()"></td>
+                <td><input type="number" value="0" min="0" onchange="actualizarTotal()"></td>
+                <td class="total-item">$0</td>
+                <td><button onclick="eliminarFila(this)">Eliminar</button></td>
+            `;
+            actualizarTotal();
+        }
+    
+        function eliminarFila(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            actualizarTotal();
+        }
+    
+        function actualizarTotal() {
+            let total = 0;
+            document.querySelectorAll('#factura-table tr').forEach((row, index) => {
+                if (index > 0) {
+                    const cantidad = row.cells[1].querySelector('input').value;
+                    const precio = row.cells[2].querySelector('input').value;
+                    const totalItem = cantidad * precio;
+                    row.cells[3].innerText = `$${totalItem.toLocaleString()}`;
+                    total += totalItem;
+                }
+            });
+            document.getElementById('total-pagar').innerText = `$${total.toLocaleString()}`;
+        }
+    
+        function imprimirFactura() {
+            window.print();
+        }
+    </script>
+</body>
+
+</html>
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura Electrónica - DIAN</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Estilos del formulario */
+        .formulario-container,
+        .factura-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2,
+        h1 {
+            text-align: center;
+            color: #ff1493;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #ff1493;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #d9137a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background: #ff1493;
+            color: white;
+        }
+
+        .total {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff1493;
+            text-align: right;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!DOCTYPE html>
+    <html lang="es">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Factura Profesional</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 20px;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: auto;
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            h2 {
+                text-align: center;
+                color: #002366;
+            }
+
+            .form-section {
+                margin-bottom: 20px;
+            }
+
+            label {
+                font-weight: bold;
+                display: block;
+                margin-top: 10px;
+                color: #002366;
+            }
+
+            input,
+            select {
+                width: 100%;
+                padding: 8px;
+                margin-top: 5px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            button {
+                width: 100%;
+                padding: 10px;
+                margin-top: 15px;
+                border: none;
+                border-radius: 5px;
+                background-color: #ff1493;
+                color: white;
+                font-size: 16px;
+                cursor: pointer;
+            }
+
+            button:hover {
+                background-color: #da2ebd;
+            }
+
+            .hidden {
+                display: none;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+
+            th,
+            td {
+                border: 1px solid #ec0584;
+                padding: 10px;
+                text-align: center;
+            }
+
+            th {
+                background-color: #002366;
+                color: white;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="container">
+            <h2>Generar Factura</h2>
+            <div id="formulario-container">
+                <form id="factura-form">
+                    <div class="form-section">
+                        <label>Nombre de la Empresa</label>
+                        <input type="text" id="empresa">
+                        <label>NIT</label>
+                        <input type="text" id="nit-empresa">
+                        <label>Dirección</label>
+                        <input type="text" id="direccion-empresa">
+                        <label>Teléfono</label>
+                        <input type="text" id="telefono-empresa">
+                    </div>
+                    <div class="form-section">
+                        <label>Nombre del Cliente</label>
+                        <input type="text" id="cliente">
+                        <label>NIT/Cédula</label>
+                        <input type="text" id="nit-cliente">
+                        <label>Dirección</label>
+                        <input type="text" id="direccion-cliente">
+                        <label>Teléfono</label>
+                        <input type="text" id="telefono-cliente">
+                    </div>
+                    <div class="form-section">
+                        <label>Método de Pago</label>
+                        <select id="metodo-pago">
+                            <option value="PSE">PSE</option>
+                            <option value="Nequi">Nequi</option>
+                            <option value="Daviplata">Daviplata</option>
+                        </select>
+                    </div>
+                    <button type="submit">Generar Factura</button>
+                </form>
+            </div>
+
+            <div id="factura-container" class="hidden">
+                <h2>Factura</h2>
+                <p><strong>Empresa:</strong> <span id="factura-empresa"></span></p>
+                <p><strong>NIT:</strong> <span id="factura-nit-empresa"></span></p>
+                <p><strong>Cliente:</strong> <span id="factura-cliente"></span></p>
+                <p><strong>Método de Pago:</strong> <span id="factura-metodo-pago"></span></p>
+                <h3>Total a Pagar: <span id="total-pagar">$0</span></h3>
+                <button onclick="window.print()">Imprimir Factura</button>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById("factura-form").addEventListener("submit", function (event) {
+                event.preventDefault();
+                document.getElementById("factura-empresa").textContent = document.getElementById("empresa").value;
+                document.getElementById("factura-nit-empresa").textContent = document.getElementById("nit-empresa").value;
+                document.getElementById("factura-cliente").textContent = document.getElementById("cliente").value;
+                document.getElementById("factura-metodo-pago").textContent = document.getElementById("metodo-pago").value;
+                document.getElementById("formulario-container").classList.add("hidden");
+                document.getElementById("factura-container").classList.remove("hidden");
+            });
+        </script>
+
+    </body>
+
+    </html>
+    <!DOCTYPE html>
+    <html lang="es">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Contabilidad</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 20px;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: auto;
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            h2 {
+                text-align: center;
+                color: #002366;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+
+            th,
+            td {
+                border: 1px solid #ddd;
+                padding: 10px;
+                text-align: center;
+            }
+
+            th {
+                background-color: #002366;
+                color: white;
+            }
+
+            button {
+                width: 100%;
+                padding: 10px;
+                margin-top: 15px;
+                border: none;
+                border-radius: 5px;
+                background-color: #ff66b2;
+                color: white;
+                font-size: 16px;
+                cursor: pointer;
+            }
+
+            button:hover {
+                background-color: #cc528a;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <h2>Registro Contable</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Descripción</th>
+                        <th>Ingreso</th>
+                        <th>Eg<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billiwing - Bienvenido</title>
+    <style>
+        /* Configuración general */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f8f9fa;
+            /* Gris claro elegante */
+        }
+
+        /* Encabezado */
+        header {
+            background: linear-gradient(90deg, #ff69b4, #ff1493);
+            /* Gradiente rosado elegante */
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        header img {
+            max-width: 120px;
+            height: auto;
+            margin-top: 10px;
+        }
+
+        header .auth-buttons {
+            margin-top: 15px;
+        }
+
+        header .auth-buttons a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            padding: 8px 15px;
+            border: 2px solid white;
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        header .auth-buttons a:hover {
+            background-color: white;
+            color: #ff1493;
+        }
+
+        /* Navegación */
+        nav {
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav a {
+            color: #333;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 5px 10px;
+        }
+
+        nav a:hover {
+            color: #ff1493;
+        }
+
+        /* Contenido principal */
+        main {
+            text-align: center;
+            padding: 40px 20px;
+            background: #fff;
+        }
+
+        main h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: rgb(3, 3, 107);
+        }
+
+        main p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        /* Imagen destacada */
+        .bottom-image-container {
+            text-align: center;
+            margin: 40px auto;
+        }
+
+        .bottom-image-container img {
+            max-width: 60%;
+            border: 5px solid #d31078;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .bottom-image-container img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Pie de página */
+        footer {
+            background-color: rgb(8, 8, 85);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Bienvenido a Billiwing</h1>
+        <div class="auth-buttons">
+            <a href="#login">Iniciar Sesión</a>
+            <a href="#register">Registrarse</a>
+        </div>
+    </header>
+    <nav>
+        <a href="#home">Inicio</a>
+        <a href="#about">Acerca de</a>
+        <a href="#services">Servicios</a>
+    </nav>
+    <main>
+        <h2>¡Explora nuestras soluciones únicas!</h2>
+        <p>
+            En Billiwing, nos especializamos en ofrecer servicios de calidad que transforman
+            tus ideas en realidad. Descubre todo lo que tenemos para ofrecerte.
+        </p>
+    </main>
+    <div class="bottom-image-container">
+        <img src="C:\Users\Valentina\Desktop\BILLIWING.jpg" alt="Imagen destacada de Billiwing">
+    </div>
+    <footer>
+        <p>&copy; 2025 Billiwing. Todos los derechos reservados.</p>
+    </footer>
+    <main id="login">
+        <h2>Iniciar Sesión</h2>
+        <p>Accede a tu cuenta para disfrutar de nuestros servicios.</p>
+        <form action="/login" method="post"
+            style="max-width: 400px; margin: 0 auto; text-align: left; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+            <label for="email" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Correo
+                Electrónico:</label>
+            <input type="email" id="email" name="email" required placeholder="Ingresa tu correo"
+                style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+
+            <label for="password"
+                style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Contraseña:</label>
+            <input type="password" id="password" name="password" required placeholder="Ingresa tu contraseña"
+                style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+
+            <button type="submit"
+                style="width: 100%; background: #ff1493; color: white; border: none; padding: 12px; border-radius: 5px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.3s;">
+                Iniciar Sesión
+            </button>
+
+            <p style="margin-top: 15px; font-size: 0.9rem; text-align: center;">
+                ¿No tienes una cuenta? <a href="#register"
+                    style="color: #ff1493; text-decoration: none; font-weight: bold;">Regístrate aquí</a>.
+            </p>
+        </form>
+    </main>
+
+</body>
+
+</html>
+<main id="register">
+    <h2>Registro</h2>
+    <p>Crea una cuenta para acceder a nuestros servicios.</p>
+    <form action="/register" method="post"
+        style="max-width: 400px; margin: 0 auto; text-align: left; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+        <label for="name" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Nombre
+            Completo:</label>
+        <input type="text" id="name" name="name" required placeholder="Ingresa tu nombre"
+            style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+
+        <label for="email" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Correo
+            Electrónico:</label>
+        <input type="email" id="email" name="email" required placeholder="Ingresa tu correo"
+            style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+
+        <label for="password"
+            style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Contraseña:</label>
+        <input type="password" id="password" name="password" required placeholder="Ingresa tu contraseña"
+            style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+
+        <label for="confirm-password"
+            style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Confirmar Contraseña:</label>
+        <input type="password" id="confirm-password" name="confirm-password" required
+            placeholder="Confirma tu contraseña"
+            style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+
+        <button type="submit"
+            style="width: 100%; background: #ff1493; color: white; border: none; padding: 12px; border-radius: 5px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.3s;">
+            Registrarse
+        </button>
+
+        <p style="margin-top: 15px; font-size: 0.9rem; text-align: center;">
+            ¿Ya tienes una cuenta? <a href="#login"
+                style="color: #ff1493; text-decoration: none; font-weight: bold;">Inicia sesión aquí</a>.
+        </p>
+    </form>
+</main>
+<script>
+    document.getElementById("login-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+  
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+  
+      try {
+        const res = await fetch("http://localhost:3000/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        });
+  
+        const data = await res.json();
+  
+        if (!res.ok) {
+          alert(data.message || "Error al iniciar sesión");
+          return;
+        }
+  
+        localStorage.setItem("token", data.token);
+        alert("Inicio de sesión exitoso");
+        window.location.href = "prueba.html";
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Ocurrió un error al conectar con el servidor");
+      }
+    });
+  </script>
+  
 <!DOCTYPE html>
 <html lang="es">
 
@@ -910,6 +1887,31 @@
                         <th>Descripción</th>
                         <th>Ingreso</th>
                         <th>Egreso</th>
+                        <th>Saldo</th>
+                    </tr>
+                </thead>
+                <tbody id="contabilidad-body">
+                    <!-- Filas dinámicas -->
+                </tbody>
+            </table>
+            <button id="agregar-registro">➕ Agregar Registro</button>
+        </div>
+
+        <script>
+            document.getElementById("agregar-registro").addEventListener("click", () => {
+                let fila = `<tr>
+                <td><input type="date"></td>
+                <td><input type="text" placeholder="Descripción"></td>
+                <td><input type="number" class="ingreso" value="0"></td>
+                <td><input type="number" class="egreso" value="0"></td>
+                <td class="saldo">$0</td>
+            </tr>`;
+                document.getElementById("contabilidad-body").insertAdjacentHTML("beforeend", fila);
+            });
+        </script>
+    </body>
+
+    </html>reso</th>
                         <th>Saldo</th>
                     </tr>
                 </thead>
