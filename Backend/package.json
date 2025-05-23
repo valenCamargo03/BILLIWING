@@ -1,22 +1,27 @@
 {
-  "name": "nodejs-sequelize-restapi",
+  "name": "billiwing-backend",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js"
   },
-  "keywords": [],
+  "keywords": ["billiwing", "contabilidad", "autenticacion"],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Backend para sistema BILLIWING con autenticación",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "express": "^4.21.1",
+    "express-validator": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "pg": "^8.13.0",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
